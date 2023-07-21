@@ -1,0 +1,75 @@
+/* src/components/Login.css */
+.login-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  padding: 20px;
+  box-sizing: border-box;
+  background-color: #ffffff; /* Nuevo color de fondo */
+}
+
+.login-container {
+  background-color: #6abf9c; /* Nuevo color de fondo para el contenedor */
+  width: 300px;
+  padding: 40px;
+  border: 1px solid #aac0a0;
+  border-radius: 10px;
+  box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.5); /* Sombra más oscura */
+  text-align: center;
+}
+
+.login-title {
+  margin-bottom: 30px;
+  color: #ffffff; /* Cambiar el color del título a blanco */
+  font-weight: bold;
+  font-size: 2em;
+}
+
+.login-container form {
+  display: flex;
+  flex-direction: column;
+}
+
+.login-container form .form-group {
+  margin-bottom: 25px;
+}
+
+.login-container .form-label {
+  color: #ffffff; /* Cambiar el color de la etiqueta a blanco */
+  margin-bottom: 5px;
+  font-weight: bold;
+  text-transform: uppercase;
+  text-align: left;
+}
+
+.login-container .form-control {
+  border-radius: 4px;
+  border-color: #aac0a0;
+  margin-bottom: 20px;
+  background-color: #ffffff; /* Nuevo color de fondo para los campos de formulario */
+  color: #4f9273; /* Nuevo color de texto para los campos de formulario */
+}
+
+.login-container form button[type="submit"] {
+  background-color: #f7a42a; /* Nuevo color del botón */
+  border-color: #f7a42a; /* Nuevo color del borde del botón */
+  margin-bottom: 20px;
+  color: #ffffff; /* Cambiar el color del texto del botón a blanco */
+}
+
+.login-container form button[type="submit"]:hover,
+.login-container form button[type="submit"]:active,
+.login-container form button[type="submit"]:focus {
+  background-color: #f78c1e; /* Nuevo color del botón al pasar el mouse por encima */
+  border-color: #f78c1e; /* Nuevo color del borde del botón al pasar el mouse por encima */
+}
+
+.login-container form button[type="submit"]:disabled {
+  background-color: #eff7ef;
+  border-color: #eff7ef;
+}
+
+.login-container form button[type="link"] {
+  color: #f7a42a; /* Nuevo color para el botón de enlace */
+}

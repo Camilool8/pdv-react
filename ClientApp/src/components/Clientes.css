@@ -1,0 +1,112 @@
+.client-container {
+  display: flex;
+  justify-content: space-between;
+  padding: 2rem;
+  background-color: #eff7ef;
+  gap: 1rem;
+  height: calc(
+    100vh - 4rem
+  ); /* Si tienes un encabezado o un pie de página, necesitarás ajustar este valor */
+  overflow: hidden; /* Para asegurar que cualquier exceso de contenido esté oculto */
+}
+
+.client-form-container h2 {
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.client-container .client-form-container,
+.client-container .client-list-container {
+  background-color: #ffffff;
+  padding: 2rem;
+  border-radius: 10px;
+  box-shadow: 0 0.5rem 1rem rgba(140, 207, 156, 0.15);
+  transition: box-shadow 0.3s ease;
+}
+
+.client-container .client-form-container {
+  flex: 0 0 20%; /* Cambiado a 0 0 para evitar que el tamaño de este contenedor cambie */
+  max-height: 420px;
+}
+
+.client-container .client-list-container {
+  flex: 1 1 79%;
+  overflow: hidden;
+  max-height: 650px;
+}
+
+.client-list-container .table-container {
+  max-height: 480px;
+  overflow-y: scroll;
+  border: 1px solid #8ccf9c;
+  border-radius: 4px;
+  box-shadow: 0 0.5rem 1rem rgba(140, 207, 156, 0.15);
+}
+
+form .form-label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 700;
+  color: black;
+}
+
+form input.form-input {
+  border: 1px solid #8ccf9c;
+  background-color: #ffffff;
+  transition: border-color 0.3s ease;
+}
+
+form input.form-input:focus {
+  outline: none;
+  border-color: #71b885;
+}
+
+form button {
+  border: none;
+  height: 60px;
+  padding: 0.5rem 1rem;
+  border-radius: 10px;
+  transition: background-color 0.3s ease;
+  text-transform: uppercase;
+}
+
+form button:hover {
+  background-color: #eff7ef;
+}
+
+table th {
+  color: #8ccf9c;
+}
+
+table tr {
+  transition: background-color 0.3s ease;
+}
+
+table tr.table-success {
+  background-color: #d6e7ce;
+}
+
+table tr:hover {
+  background-color: #eff7ef;
+  cursor: pointer;
+}
+
+table td .cursor-pointer {
+  transition: color 0.3s ease;
+}
+
+table td .cursor-pointer:hover {
+  color: #71b885;
+}
+
+table td .text-warning {
+  color: #8ccf9c;
+}
+
+table td .text-danger {
+  color: #5da071;
+}
+
+table td .text-danger:hover {
+  color: #488056;
+}
