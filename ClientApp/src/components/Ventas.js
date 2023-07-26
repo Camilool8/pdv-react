@@ -133,11 +133,18 @@ const handleAsignacion = (event, productoId, producto) => {
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        overflowY: "scroll",
-        maxHeight: "80vh",
+        maxHeight: "100vh",
+        marginBottom: "4rem",
       }}
     >
-      <Card style={{ minWidth: 500, padding: "1rem", marginTop: "3rem" }}>
+      <Card
+        style={{
+          minWidth: 500,
+          maxHeight: "600px",
+          padding: "1rem",
+          overflowY: "scroll",
+        }}
+      >
         <Typography
           variant="h6"
           id="modal-modal-title"
@@ -302,12 +309,18 @@ const Facturar = ({
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        overflowY: "scroll",
-        maxHeight: "80vh",
-        marginTop: "3rem",
+        maxHeight: "100vh",
+        marginBottom: "4rem"
       }}
     >
-      <Card style={{ minWidth: 500, padding: "1rem", marginTop: "3rem" }}>
+      <Card
+        style={{
+          minWidth: 500,
+          maxHeight: "600px",
+          padding: "1rem",
+          overflowY: "scroll",
+        }}
+      >
         <Typography
           variant="h6"
           id="modal-modal-title"
@@ -316,32 +329,42 @@ const Facturar = ({
         >
           Facturas
         </Typography>
-          <Grid container spacing={1}>
-            {facturas.map((factura, idx) => {
-              // Determine grid size based on the number of items
-              const gridSize = Math.floor(12 / facturas.length) > 0 ? Math.floor(12 / facturas.length) : 1;
+        <Grid container spacing={1}>
+          {facturas.map((factura, idx) => {
+            // Determine grid size based on the number of items
+            const gridSize =
+              Math.floor(12 / facturas.length) > 0
+                ? Math.floor(12 / facturas.length)
+                : 1;
 
-              return (
-                <Grid item xs={12} md={gridSize} lg={gridSize} key={idx}>
-                  <FacturaCard
-                    factura={factura}
-                    vendedor={vendedor}
-                    cliente={cliente}
-                  />
-                </Grid>
-              )
-            })}
-          </Grid>
-          <Select value={metodoPago1} onChange={(event) => setMetodoPago(event.target.value)}>
-            <MenuItem value="Efectivo">Efectivo</MenuItem>
-            <MenuItem value="Tarjeta">Tarjeta</MenuItem>
-          </Select>
-        <Button color="primary" onClick={() => {
-          if (window.confirm("¿Estás seguro que deseas cerrar la venta?")) {
-            cerrarVenta(metodoPago1);
-          setModalOpen(false);
-        }
-        }} sx={{ marginLeft: "1rem", fontWeight: "bold", fontSize: "1.2rem" }}>
+            return (
+              <Grid item xs={12} md={gridSize} lg={gridSize} key={idx}>
+                <FacturaCard
+                  factura={factura}
+                  vendedor={vendedor}
+                  cliente={cliente}
+                />
+              </Grid>
+            );
+          })}
+        </Grid>
+        <Select
+          value={metodoPago1}
+          onChange={(event) => setMetodoPago(event.target.value)}
+        >
+          <MenuItem value="Efectivo">Efectivo</MenuItem>
+          <MenuItem value="Tarjeta">Tarjeta</MenuItem>
+        </Select>
+        <Button
+          color="primary"
+          onClick={() => {
+            if (window.confirm("¿Estás seguro que deseas cerrar la venta?")) {
+              cerrarVenta(metodoPago1);
+              setModalOpen(false);
+            }
+          }}
+          sx={{ marginLeft: "1rem", fontWeight: "bold", fontSize: "1.2rem" }}
+        >
           Finalizar Venta
         </Button>
       </Card>

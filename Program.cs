@@ -128,7 +128,7 @@ using (var scope = app.Services.CreateScope())
     // Check if the admin user exists, if not, create it
     if (await userManager.FindByNameAsync(admin.UserName) == null)
     {
-        await userManager.CreateAsync(admin, "AdminP@ssw0rd123!");
+        await userManager.CreateAsync(admin, "  ");
         await userManager.AddToRoleAsync(admin, "Administrador");
     }
 }

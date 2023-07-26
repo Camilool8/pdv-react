@@ -144,7 +144,7 @@ function Usuarios() {
                 />
               </div>
               <div className="mb-3">
-                <label className="form-label">Dirección</label>
+                <label className="form-label">Email</label>
                 <input
                   {...register("email")}
                   placeholder="Email"
@@ -152,7 +152,7 @@ function Usuarios() {
                 />
               </div>
               <div className="mb-3">
-                <label className="form-label">Teléfono</label>
+                <label className="form-label">Rol</label>
                 <input
                   {...register("rol")}
                   placeholder="Rol"
