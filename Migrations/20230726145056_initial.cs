@@ -93,20 +93,6 @@ namespace PDVreact.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Reportes",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    FechaInicio = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    FechaFin = table.Column<DateTime>(type: "datetime2", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Reportes", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "AspNetRoleClaims",
                 columns: table => new
                 {
@@ -241,23 +227,39 @@ namespace PDVreact.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Facturas",
+                name: "Ventas",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Fecha = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Total = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    MesaId = table.Column<int>(type: "int", nullable: true)
+                    UsuarioId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    ClienteId = table.Column<int>(type: "int", nullable: false),
+                    Estado = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    MesaId = table.Column<int>(type: "int", nullable: false),
+                    MetodoPago = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Fecha = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Facturas", x => x.Id);
+                    table.PrimaryKey("PK_Ventas", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Facturas_Mesas_MesaId",
+                        name: "FK_Ventas_AspNetUsers_UsuarioId",
+                        column: x => x.UsuarioId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Ventas_Clientes_ClienteId",
+                        column: x => x.ClienteId,
+                        principalTable: "Clientes",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Ventas_Mesas_MesaId",
                         column: x => x.MesaId,
                         principalTable: "Mesas",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -281,62 +283,19 @@ namespace PDVreact.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Ventas",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    ClienteId = table.Column<int>(type: "int", nullable: false),
-                    UsuarioId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    Total = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    MetodoPago = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Fecha = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    FacturaId = table.Column<int>(type: "int", nullable: false),
-                    MesaId = table.Column<int>(type: "int", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Ventas", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Ventas_AspNetUsers_UsuarioId",
-                        column: x => x.UsuarioId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Ventas_Clientes_ClienteId",
-                        column: x => x.ClienteId,
-                        principalTable: "Clientes",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Ventas_Facturas_FacturaId",
-                        column: x => x.FacturaId,
-                        principalTable: "Facturas",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Ventas_Mesas_MesaId",
-                        column: x => x.MesaId,
-                        principalTable: "Mesas",
-                        principalColumn: "Id");
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Pagos",
+                name: "Cuentas",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     VentaId = table.Column<int>(type: "int", nullable: false),
-                    Monto = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    Fecha = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    Total = table.Column<decimal>(type: "decimal(18,2)", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Pagos", x => x.Id);
+                    table.PrimaryKey("PK_Cuentas", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Pagos_Ventas_VentaId",
+                        name: "FK_Cuentas_Ventas_VentaId",
                         column: x => x.VentaId,
                         principalTable: "Ventas",
                         principalColumn: "Id",
@@ -344,28 +303,58 @@ namespace PDVreact.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "VentaProductos",
+                name: "Detalle",
                 columns: table => new
                 {
-                    VentaId = table.Column<int>(type: "int", nullable: false),
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     ProductoId = table.Column<int>(type: "int", nullable: false),
-                    Cantidad = table.Column<int>(type: "int", nullable: false)
+                    Cantidad = table.Column<int>(type: "int", nullable: false),
+                    VentaId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_VentaProductos", x => new { x.VentaId, x.ProductoId });
+                    table.PrimaryKey("PK_Detalle", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_VentaProductos_Productos_ProductoId",
+                        name: "FK_Detalle_Productos_ProductoId",
                         column: x => x.ProductoId,
                         principalTable: "Productos",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_VentaProductos_Ventas_VentaId",
+                        name: "FK_Detalle_Ventas_VentaId",
                         column: x => x.VentaId,
                         principalTable: "Ventas",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Facturas",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    CuentaId = table.Column<int>(type: "int", nullable: false),
+                    Total = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    FechaHora = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Estado = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    MesaId = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Facturas", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Facturas_Cuentas_CuentaId",
+                        column: x => x.CuentaId,
+                        principalTable: "Cuentas",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Facturas_Mesas_MesaId",
+                        column: x => x.MesaId,
+                        principalTable: "Mesas",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateIndex(
@@ -413,6 +402,26 @@ namespace PDVreact.Migrations
                 filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Cuentas_VentaId",
+                table: "Cuentas",
+                column: "VentaId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Detalle_ProductoId",
+                table: "Detalle",
+                column: "ProductoId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Detalle_VentaId",
+                table: "Detalle",
+                column: "VentaId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Facturas_CuentaId",
+                table: "Facturas",
+                column: "CuentaId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Facturas_MesaId",
                 table: "Facturas",
                 column: "MesaId");
@@ -423,29 +432,14 @@ namespace PDVreact.Migrations
                 column: "ProductoId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Pagos_VentaId",
-                table: "Pagos",
-                column: "VentaId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Productos_CategoriaId",
                 table: "Productos",
                 column: "CategoriaId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_VentaProductos_ProductoId",
-                table: "VentaProductos",
-                column: "ProductoId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Ventas_ClienteId",
                 table: "Ventas",
                 column: "ClienteId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Ventas_FacturaId",
-                table: "Ventas",
-                column: "FacturaId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Ventas_MesaId",
@@ -477,19 +471,19 @@ namespace PDVreact.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
+                name: "Detalle");
+
+            migrationBuilder.DropTable(
+                name: "Facturas");
+
+            migrationBuilder.DropTable(
                 name: "Inventarios");
 
             migrationBuilder.DropTable(
-                name: "Pagos");
-
-            migrationBuilder.DropTable(
-                name: "Reportes");
-
-            migrationBuilder.DropTable(
-                name: "VentaProductos");
-
-            migrationBuilder.DropTable(
                 name: "AspNetRoles");
+
+            migrationBuilder.DropTable(
+                name: "Cuentas");
 
             migrationBuilder.DropTable(
                 name: "Productos");
@@ -505,9 +499,6 @@ namespace PDVreact.Migrations
 
             migrationBuilder.DropTable(
                 name: "Clientes");
-
-            migrationBuilder.DropTable(
-                name: "Facturas");
 
             migrationBuilder.DropTable(
                 name: "Mesas");

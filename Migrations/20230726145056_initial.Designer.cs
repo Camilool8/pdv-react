@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace PDVreact.Migrations
 {
     [DbContext(typeof(WebApiContext))]
-    [Migration("20230721150653_initial")]
+    [Migration("20230726145056_initial")]
     partial class initial
     {
         /// <inheritdoc />
@@ -204,6 +204,53 @@ namespace PDVreact.Migrations
                     b.ToTable("Clientes");
                 });
 
+            modelBuilder.Entity("PDVreact.Models.Cuenta", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<decimal>("Total")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("VentaId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("VentaId");
+
+                    b.ToTable("Cuentas");
+                });
+
+            modelBuilder.Entity("PDVreact.Models.DetalleVenta", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("Cantidad")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ProductoId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("VentaId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProductoId");
+
+                    b.HasIndex("VentaId");
+
+                    b.ToTable("Detalle");
+                });
+
             modelBuilder.Entity("PDVreact.Models.Factura", b =>
                 {
                     b.Property<int>("Id")
@@ -212,7 +259,14 @@ namespace PDVreact.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<DateTime>("Fecha")
+                    b.Property<int>("CuentaId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Estado")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("FechaHora")
                         .HasColumnType("datetime2");
 
                     b.Property<int?>("MesaId")
@@ -222,6 +276,8 @@ namespace PDVreact.Migrations
                         .HasColumnType("decimal(18,2)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CuentaId");
 
                     b.HasIndex("MesaId");
 
@@ -266,30 +322,6 @@ namespace PDVreact.Migrations
                     b.ToTable("Mesas");
                 });
 
-            modelBuilder.Entity("PDVreact.Models.Pago", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("Fecha")
-                        .HasColumnType("datetime2");
-
-                    b.Property<decimal>("Monto")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<int>("VentaId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("VentaId");
-
-                    b.ToTable("Pagos");
-                });
-
             modelBuilder.Entity("PDVreact.Models.Producto", b =>
                 {
                     b.Property<int>("Id")
@@ -317,25 +349,6 @@ namespace PDVreact.Migrations
                     b.HasIndex("CategoriaId");
 
                     b.ToTable("Productos");
-                });
-
-            modelBuilder.Entity("PDVreact.Models.Reporte", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("FechaFin")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("FechaInicio")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Reportes");
                 });
 
             modelBuilder.Entity("PDVreact.Models.Usuario", b =>
@@ -407,7 +420,7 @@ namespace PDVreact.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
-            modelBuilder.Entity("PDVreact.Models.Venta", b =>
+            modelBuilder.Entity("Venta", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -418,21 +431,19 @@ namespace PDVreact.Migrations
                     b.Property<int>("ClienteId")
                         .HasColumnType("int");
 
-                    b.Property<int>("FacturaId")
-                        .HasColumnType("int");
+                    b.Property<string>("Estado")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("Fecha")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("MesaId")
+                    b.Property<int>("MesaId")
                         .HasColumnType("int");
 
                     b.Property<string>("MetodoPago")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<decimal>("Total")
-                        .HasColumnType("decimal(18,2)");
 
                     b.Property<string>("UsuarioId")
                         .IsRequired()
@@ -442,31 +453,11 @@ namespace PDVreact.Migrations
 
                     b.HasIndex("ClienteId");
 
-                    b.HasIndex("FacturaId");
-
                     b.HasIndex("MesaId");
 
                     b.HasIndex("UsuarioId");
 
                     b.ToTable("Ventas");
-                });
-
-            modelBuilder.Entity("VentaProducto", b =>
-                {
-                    b.Property<int>("VentaId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ProductoId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Cantidad")
-                        .HasColumnType("int");
-
-                    b.HasKey("VentaId", "ProductoId");
-
-                    b.HasIndex("ProductoId");
-
-                    b.ToTable("VentaProductos");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -524,11 +515,49 @@ namespace PDVreact.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("PDVreact.Models.Cuenta", b =>
+                {
+                    b.HasOne("Venta", "Venta")
+                        .WithMany("Cuentas")
+                        .HasForeignKey("VentaId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Venta");
+                });
+
+            modelBuilder.Entity("PDVreact.Models.DetalleVenta", b =>
+                {
+                    b.HasOne("PDVreact.Models.Producto", "Producto")
+                        .WithMany()
+                        .HasForeignKey("ProductoId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Venta", "Venta")
+                        .WithMany("DetalleVentas")
+                        .HasForeignKey("VentaId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Producto");
+
+                    b.Navigation("Venta");
+                });
+
             modelBuilder.Entity("PDVreact.Models.Factura", b =>
                 {
+                    b.HasOne("PDVreact.Models.Cuenta", "Cuenta")
+                        .WithMany()
+                        .HasForeignKey("CuentaId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("PDVreact.Models.Mesa", null)
                         .WithMany("Facturas")
                         .HasForeignKey("MesaId");
+
+                    b.Navigation("Cuenta");
                 });
 
             modelBuilder.Entity("PDVreact.Models.Inventario", b =>
@@ -542,17 +571,6 @@ namespace PDVreact.Migrations
                     b.Navigation("Producto");
                 });
 
-            modelBuilder.Entity("PDVreact.Models.Pago", b =>
-                {
-                    b.HasOne("PDVreact.Models.Venta", "Venta")
-                        .WithMany("Pagos")
-                        .HasForeignKey("VentaId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Venta");
-                });
-
             modelBuilder.Entity("PDVreact.Models.Producto", b =>
                 {
                     b.HasOne("PDVreact.Models.Categoria", "Categoria")
@@ -564,7 +582,7 @@ namespace PDVreact.Migrations
                     b.Navigation("Categoria");
                 });
 
-            modelBuilder.Entity("PDVreact.Models.Venta", b =>
+            modelBuilder.Entity("Venta", b =>
                 {
                     b.HasOne("PDVreact.Models.Cliente", "Cliente")
                         .WithMany()
@@ -572,15 +590,11 @@ namespace PDVreact.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("PDVreact.Models.Factura", "Factura")
+                    b.HasOne("PDVreact.Models.Mesa", "Mesa")
                         .WithMany("Ventas")
-                        .HasForeignKey("FacturaId")
+                        .HasForeignKey("MesaId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.HasOne("PDVreact.Models.Mesa", null)
-                        .WithMany("Ventas")
-                        .HasForeignKey("MesaId");
 
                     b.HasOne("PDVreact.Models.Usuario", "Usuario")
                         .WithMany("Ventas")
@@ -590,38 +604,14 @@ namespace PDVreact.Migrations
 
                     b.Navigation("Cliente");
 
-                    b.Navigation("Factura");
+                    b.Navigation("Mesa");
 
                     b.Navigation("Usuario");
-                });
-
-            modelBuilder.Entity("VentaProducto", b =>
-                {
-                    b.HasOne("PDVreact.Models.Producto", "Producto")
-                        .WithMany()
-                        .HasForeignKey("ProductoId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("PDVreact.Models.Venta", "Venta")
-                        .WithMany("VentaProductos")
-                        .HasForeignKey("VentaId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Producto");
-
-                    b.Navigation("Venta");
                 });
 
             modelBuilder.Entity("PDVreact.Models.Categoria", b =>
                 {
                     b.Navigation("Productos");
-                });
-
-            modelBuilder.Entity("PDVreact.Models.Factura", b =>
-                {
-                    b.Navigation("Ventas");
                 });
 
             modelBuilder.Entity("PDVreact.Models.Mesa", b =>
@@ -638,11 +628,11 @@ namespace PDVreact.Migrations
                     b.Navigation("Ventas");
                 });
 
-            modelBuilder.Entity("PDVreact.Models.Venta", b =>
+            modelBuilder.Entity("Venta", b =>
                 {
-                    b.Navigation("Pagos");
+                    b.Navigation("Cuentas");
 
-                    b.Navigation("VentaProductos");
+                    b.Navigation("DetalleVentas");
                 });
 #pragma warning restore 612, 618
         }

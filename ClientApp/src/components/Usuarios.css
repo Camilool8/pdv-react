@@ -1,9 +1,9 @@
-.client-container {
+.user-container {
   display: flex;
   flex-direction: row; /* Añadido para establecer la dirección de los elementos flexibles */
   justify-content: space-between;
   padding: 2rem;
-  background-color: #eff7ef;
+  background-color: #ffffff;
   gap: 1rem;
   height: calc(
     100vh - 4rem
@@ -11,13 +11,13 @@
   overflow: hidden; /* Para asegurar que cualquier exceso de contenido esté oculto */
 }
 
-.client-form-container h2 {
+.user-form-container h2 {
   margin-bottom: 1rem;
   text-align: center;
 }
 
-.client-container .client-form-container,
-.client-container .client-list-container {
+.user-container .user-form-container,
+.user-container .user-list-container {
   background-color: #ffffff;
   padding: 2rem;
   border-radius: 10px;
@@ -25,26 +25,26 @@
   transition: box-shadow 0.3s ease;
 }
 
-.client-container .client-form-container {
+.user-container .user-form-container {
   flex: 0.25; /* Cambiado a auto para que el tamaño se ajuste al contenido */
   min-width: 300px; /* Añadido para establecer un ancho mínimo para el contenedor del formulario */
   max-height: 650px;
 }
 
-.client-container .client-list-container {
+.user-container .user-list-container {
     flex:0.75; /* Cambiado a que ocupe todo el espacio disponible */
     overflow:hidden; 
     max-height:650px
 }
 
-.client-container .client-list-container-full {
+.user-container .user-list-container-full {
     flex:1; /* Cambiado a que ocupe todo el espacio disponible */
     overflow:hidden; 
     max-height:650px
 }
 
 
-.client-list-container .table-container {
+.user-list-container .table-container {
     max-height:480px; 
     overflow-y:scroll; 
     border:1px solid #8ccf9c; 

@@ -59,15 +59,32 @@ function Productos() {
 
   const createProducto = async (newProduct) => {
     const token = await getToken();
-    const { data } = await axios.post(
+
+    // Creando el producto
+    const productResponse = await axios.post(
       "https://localhost:7100/Productos",
       newProduct,
       {
         headers: { Authorization: `Bearer ${token}` },
       }
     );
-    return data;
-  };
+
+    // Obteniendo el ID del producto recién creado
+    const productId = productResponse.data.id;
+
+    // Creando el inventario para el nuevo producto
+    const inventory = {
+      productoId: productId,
+      cantidad: newProduct.cantidad, // usa la cantidad desde newProduct
+    };
+
+    // Haciendo el POST en el inventario
+    await axios.post("https://localhost:7100/Inventarios", inventory, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+
+    return productResponse.data;
+};
 
   const updateProducto = async ({ id, cantidad, ...updatedProduct }) => {
     const token = await getToken();
@@ -133,6 +150,7 @@ function Productos() {
   const mutationCreate = useMutation(createProducto, {
     onSuccess: () => {
       queryClient.invalidateQueries("productos");
+      queryClient.invalidateQueries("inventarios");
     },
   });
 
@@ -284,7 +302,13 @@ function Productos() {
         </div>
       )}
 
-      <div className="product-list-container p-4 bg-light rounded-3 shadow">
+      <div
+        className={
+          user && user.rol === "Administrador"
+            ? "product-list-container p-4 bg-light rounded-3 shadow"
+            : "product-list-container-full p-4 bg-light rounded-3 shadow"
+        }
+      >
         <h2 className="mb-4">Lista de Productos</h2>
         <input
           type="text"

@@ -69,14 +69,6 @@ CREATE TABLE [Mesas] (
 );
 GO
 
-CREATE TABLE [Reportes] (
-    [Id] int NOT NULL IDENTITY,
-    [FechaInicio] datetime2 NOT NULL,
-    [FechaFin] datetime2 NOT NULL,
-    CONSTRAINT [PK_Reportes] PRIMARY KEY ([Id])
-);
-GO
-
 CREATE TABLE [AspNetRoleClaims] (
     [Id] int NOT NULL IDENTITY,
     [RoleId] nvarchar(450) NOT NULL,
@@ -139,13 +131,18 @@ CREATE TABLE [Productos] (
 );
 GO
 
-CREATE TABLE [Facturas] (
+CREATE TABLE [Ventas] (
     [Id] int NOT NULL IDENTITY,
+    [UsuarioId] nvarchar(450) NOT NULL,
+    [ClienteId] int NOT NULL,
+    [Estado] nvarchar(max) NOT NULL,
+    [MesaId] int NOT NULL,
+    [MetodoPago] nvarchar(max) NOT NULL,
     [Fecha] datetime2 NOT NULL,
-    [Total] decimal(18,2) NOT NULL,
-    [MesaId] int NULL,
-    CONSTRAINT [PK_Facturas] PRIMARY KEY ([Id]),
-    CONSTRAINT [FK_Facturas_Mesas_MesaId] FOREIGN KEY ([MesaId]) REFERENCES [Mesas] ([Id])
+    CONSTRAINT [PK_Ventas] PRIMARY KEY ([Id]),
+    CONSTRAINT [FK_Ventas_AspNetUsers_UsuarioId] FOREIGN KEY ([UsuarioId]) REFERENCES [AspNetUsers] ([Id]) ON DELETE CASCADE,
+    CONSTRAINT [FK_Ventas_Clientes_ClienteId] FOREIGN KEY ([ClienteId]) REFERENCES [Clientes] ([Id]) ON DELETE CASCADE,
+    CONSTRAINT [FK_Ventas_Mesas_MesaId] FOREIGN KEY ([MesaId]) REFERENCES [Mesas] ([Id]) ON DELETE CASCADE
 );
 GO
 
@@ -158,40 +155,36 @@ CREATE TABLE [Inventarios] (
 );
 GO
 
-CREATE TABLE [Ventas] (
+CREATE TABLE [Cuentas] (
     [Id] int NOT NULL IDENTITY,
-    [ClienteId] int NOT NULL,
-    [UsuarioId] nvarchar(450) NOT NULL,
+    [VentaId] int NOT NULL,
     [Total] decimal(18,2) NOT NULL,
-    [MetodoPago] nvarchar(max) NOT NULL,
-    [Fecha] datetime2 NOT NULL,
-    [FacturaId] int NOT NULL,
-    [MesaId] int NULL,
-    CONSTRAINT [PK_Ventas] PRIMARY KEY ([Id]),
-    CONSTRAINT [FK_Ventas_AspNetUsers_UsuarioId] FOREIGN KEY ([UsuarioId]) REFERENCES [AspNetUsers] ([Id]) ON DELETE CASCADE,
-    CONSTRAINT [FK_Ventas_Clientes_ClienteId] FOREIGN KEY ([ClienteId]) REFERENCES [Clientes] ([Id]) ON DELETE CASCADE,
-    CONSTRAINT [FK_Ventas_Facturas_FacturaId] FOREIGN KEY ([FacturaId]) REFERENCES [Facturas] ([Id]) ON DELETE CASCADE,
-    CONSTRAINT [FK_Ventas_Mesas_MesaId] FOREIGN KEY ([MesaId]) REFERENCES [Mesas] ([Id])
+    CONSTRAINT [PK_Cuentas] PRIMARY KEY ([Id]),
+    CONSTRAINT [FK_Cuentas_Ventas_VentaId] FOREIGN KEY ([VentaId]) REFERENCES [Ventas] ([Id]) ON DELETE CASCADE
 );
 GO
 
-CREATE TABLE [Pagos] (
+CREATE TABLE [Detalle] (
     [Id] int NOT NULL IDENTITY,
-    [VentaId] int NOT NULL,
-    [Monto] decimal(18,2) NOT NULL,
-    [Fecha] datetime2 NOT NULL,
-    CONSTRAINT [PK_Pagos] PRIMARY KEY ([Id]),
-    CONSTRAINT [FK_Pagos_Ventas_VentaId] FOREIGN KEY ([VentaId]) REFERENCES [Ventas] ([Id]) ON DELETE CASCADE
-);
-GO
-
-CREATE TABLE [VentaProductos] (
-    [VentaId] int NOT NULL,
     [ProductoId] int NOT NULL,
     [Cantidad] int NOT NULL,
-    CONSTRAINT [PK_VentaProductos] PRIMARY KEY ([VentaId], [ProductoId]),
-    CONSTRAINT [FK_VentaProductos_Productos_ProductoId] FOREIGN KEY ([ProductoId]) REFERENCES [Productos] ([Id]) ON DELETE CASCADE,
-    CONSTRAINT [FK_VentaProductos_Ventas_VentaId] FOREIGN KEY ([VentaId]) REFERENCES [Ventas] ([Id]) ON DELETE CASCADE
+    [VentaId] int NOT NULL,
+    CONSTRAINT [PK_Detalle] PRIMARY KEY ([Id]),
+    CONSTRAINT [FK_Detalle_Productos_ProductoId] FOREIGN KEY ([ProductoId]) REFERENCES [Productos] ([Id]) ON DELETE CASCADE,
+    CONSTRAINT [FK_Detalle_Ventas_VentaId] FOREIGN KEY ([VentaId]) REFERENCES [Ventas] ([Id]) ON DELETE CASCADE
+);
+GO
+
+CREATE TABLE [Facturas] (
+    [Id] int NOT NULL IDENTITY,
+    [CuentaId] int NOT NULL,
+    [Total] decimal(18,2) NOT NULL,
+    [FechaHora] datetime2 NOT NULL,
+    [Estado] nvarchar(max) NOT NULL,
+    [MesaId] int NULL,
+    CONSTRAINT [PK_Facturas] PRIMARY KEY ([Id]),
+    CONSTRAINT [FK_Facturas_Cuentas_CuentaId] FOREIGN KEY ([CuentaId]) REFERENCES [Cuentas] ([Id]) ON DELETE CASCADE,
+    CONSTRAINT [FK_Facturas_Mesas_MesaId] FOREIGN KEY ([MesaId]) REFERENCES [Mesas] ([Id])
 );
 GO
 
@@ -219,25 +212,28 @@ GO
 CREATE UNIQUE INDEX [UserNameIndex] ON [AspNetUsers] ([NormalizedUserName]) WHERE [NormalizedUserName] IS NOT NULL;
 GO
 
+CREATE INDEX [IX_Cuentas_VentaId] ON [Cuentas] ([VentaId]);
+GO
+
+CREATE INDEX [IX_Detalle_ProductoId] ON [Detalle] ([ProductoId]);
+GO
+
+CREATE INDEX [IX_Detalle_VentaId] ON [Detalle] ([VentaId]);
+GO
+
+CREATE INDEX [IX_Facturas_CuentaId] ON [Facturas] ([CuentaId]);
+GO
+
 CREATE INDEX [IX_Facturas_MesaId] ON [Facturas] ([MesaId]);
 GO
 
 CREATE INDEX [IX_Inventarios_ProductoId] ON [Inventarios] ([ProductoId]);
 GO
 
-CREATE INDEX [IX_Pagos_VentaId] ON [Pagos] ([VentaId]);
-GO
-
 CREATE INDEX [IX_Productos_CategoriaId] ON [Productos] ([CategoriaId]);
 GO
 
-CREATE INDEX [IX_VentaProductos_ProductoId] ON [VentaProductos] ([ProductoId]);
-GO
-
 CREATE INDEX [IX_Ventas_ClienteId] ON [Ventas] ([ClienteId]);
-GO
-
-CREATE INDEX [IX_Ventas_FacturaId] ON [Ventas] ([FacturaId]);
 GO
 
 CREATE INDEX [IX_Ventas_MesaId] ON [Ventas] ([MesaId]);
@@ -247,7 +243,7 @@ CREATE INDEX [IX_Ventas_UsuarioId] ON [Ventas] ([UsuarioId]);
 GO
 
 INSERT INTO [__EFMigrationsHistory] ([MigrationId], [ProductVersion])
-VALUES (N'20230721150653_initial', N'7.0.9');
+VALUES (N'20230726145056_initial', N'7.0.9');
 GO
 
 COMMIT;
@@ -255,16 +251,20 @@ GO
 
 
 
--- Insert Categorias
+
+
+
+
 -- Insertar Categorias
 INSERT INTO Categorias (Nombre) VALUES ('Entradas');
+INSERT INTO Categorias (Nombre) VALUES ('Platos Fuertes');
 INSERT INTO Categorias (Nombre) VALUES ('Ensaladas');
 INSERT INTO Categorias (Nombre) VALUES ('Sopas');
 INSERT INTO Categorias (Nombre) VALUES ('Carnes');
 INSERT INTO Categorias (Nombre) VALUES ('Mariscos');
-INSERT INTO Categorias (Nombre) VALUES ('Aves');
 INSERT INTO Categorias (Nombre) VALUES ('Vegetarianos');
 INSERT INTO Categorias (Nombre) VALUES ('Postres');
+INSERT INTO Categorias (Nombre) VALUES ('Bebidas');
 
 
 -- Insert Clientes
@@ -293,34 +293,51 @@ VALUES ('Juan Perez', 'Calle Principal 123', '1234567890'),
 
 -- Insert Mesas
 INSERT INTO Mesas (Estado) VALUES ('Libre');
-INSERT INTO Mesas (Estado) VALUES ('Ocupada');
-
--- Insert Reportes
-INSERT INTO Reportes (FechaInicio, FechaFin) VALUES ('2023-07-20 09:00:00', '2023-07-20 18:00:00');
+INSERT INTO Mesas (Estado) VALUES ('Libre');
+INSERT INTO Mesas (Estado) VALUES ('Libre');
+INSERT INTO Mesas (Estado) VALUES ('Libre');
+INSERT INTO Mesas (Estado) VALUES ('Reservada');
+INSERT INTO Mesas (Estado) VALUES ('Libre');
+INSERT INTO Mesas (Estado) VALUES ('Libre');
+INSERT INTO Mesas (Estado) VALUES ('Reservada');
+INSERT INTO Mesas (Estado) VALUES ('Reservada');
+INSERT INTO Mesas (Estado) VALUES ('Libre');
+INSERT INTO Mesas (Estado) VALUES ('Libre');
+INSERT INTO Mesas (Estado) VALUES ('Libre');
+INSERT INTO Mesas (Estado) VALUES ('Reservada');
 
 -- Insertar Productos
-INSERT INTO Productos (Codigo, Nombre, Precio, CategoriaId) VALUES ('P01', 'Bruschetta', 7.50, 1);
-INSERT INTO Productos (Codigo, Nombre, Precio, CategoriaId) VALUES ('P02', 'Queso Frito', 8.00, 1);
-INSERT INTO Productos (Codigo, Nombre, Precio, CategoriaId) VALUES ('P03', 'Ensalada Cesar', 10.00, 2);
-INSERT INTO Productos (Codigo, Nombre, Precio, CategoriaId) VALUES ('P04', 'Ensalada Griega', 9.00, 2);
-INSERT INTO Productos (Codigo, Nombre, Precio, CategoriaId) VALUES ('P05', 'Sopa de Pollo', 8.00, 3);
-INSERT INTO Productos (Codigo, Nombre, Precio, CategoriaId) VALUES ('P06', 'Sopa de Tomate', 7.00, 3);
-INSERT INTO Productos (Codigo, Nombre, Precio, CategoriaId) VALUES ('P07', 'Filete de Res', 25.00, 4);
-INSERT INTO Productos (Codigo, Nombre, Precio, CategoriaId) VALUES ('P08', 'Chuletas de Cerdo', 20.00, 4);
-INSERT INTO Productos (Codigo, Nombre, Precio, CategoriaId) VALUES ('P09', 'Camarones al Ajillo', 18.00, 5);
-INSERT INTO Productos (Codigo, Nombre, Precio, CategoriaId) VALUES ('P10', 'Pescado a la Veracruzana', 22.00, 5);
-INSERT INTO Productos (Codigo, Nombre, Precio, CategoriaId) VALUES ('P11', 'Pollo al Limón', 15.00, 6);
-INSERT INTO Productos (Codigo, Nombre, Precio, CategoriaId) VALUES ('P12', 'Pollo a la Parmesana', 16.00, 6);
-INSERT INTO Productos (Codigo, Nombre, Precio, CategoriaId) VALUES ('P13', 'Lasagna Vegetariana', 14.00, 7);
-INSERT INTO Productos (Codigo, Nombre, Precio, CategoriaId) VALUES ('P14', 'Enchiladas Vegetarianas', 13.00, 7);
-INSERT INTO Productos (Codigo, Nombre, Precio, CategoriaId) VALUES ('P15', 'Tiramisu', 7.00, 8);
-INSERT INTO Productos (Codigo, Nombre, Precio, CategoriaId) VALUES ('P16', 'Helado', 6.00, 8);
-INSERT INTO Productos (Codigo, Nombre, Precio, CategoriaId) VALUES ('P17', 'Tarta de Queso', 8.00, 8);
-INSERT INTO Productos (Codigo, Nombre, Precio, CategoriaId) VALUES ('P18', 'Flan', 7.00, 8);
-INSERT INTO Productos (Codigo, Nombre, Precio, CategoriaId) VALUES ('P19', 'Brownie de Chocolate', 7.50, 8);
-INSERT INTO Productos (Codigo, Nombre, Precio, CategoriaId) VALUES ('P20', 'Pastel de Zanahoria', 8.00, 8);
+INSERT INTO Productos (Codigo, Nombre, Precio, CategoriaId) VALUES ('P01', 'Croquetas de jamón', 150.00, 1);
+INSERT INTO Productos (Codigo, Nombre, Precio, CategoriaId) VALUES ('P02', 'Tostones de plátano', 80.00, 1);
+INSERT INTO Productos (Codigo, Nombre, Precio, CategoriaId) VALUES ('P03', 'Bistec de res', 600.00, 2);
+INSERT INTO Productos (Codigo, Nombre, Precio, CategoriaId) VALUES ('P04', 'Pollo al horno', 500.00, 2);
+INSERT INTO Productos (Codigo, Nombre, Precio, CategoriaId) VALUES ('P05', 'Ensalada César', 200.00, 3);
+INSERT INTO Productos (Codigo, Nombre, Precio, CategoriaId) VALUES ('P06', 'Ensalada caprese', 240.00, 3);
+INSERT INTO Productos (Codigo, Nombre, Precio, CategoriaId) VALUES ('P07', 'Sopa de pollo', 150.00, 4);
+INSERT INTO Productos (Codigo, Nombre, Precio, CategoriaId) VALUES ('P08', 'Sopa de mariscos', 350.00, 4);
+INSERT INTO Productos (Codigo, Nombre, Precio, CategoriaId) VALUES ('P09', 'Churrasco', 800.00, 5);
+INSERT INTO Productos (Codigo, Nombre, Precio, CategoriaId) VALUES ('P10', 'Parrilla mixta', 900.00, 5);
+INSERT INTO Productos (Codigo, Nombre, Precio, CategoriaId) VALUES ('P11', 'Camarones al ajillo', 700.00, 6);
+INSERT INTO Productos (Codigo, Nombre, Precio, CategoriaId) VALUES ('P12', 'Pescado al coco', 650.00, 6);
+INSERT INTO Productos (Codigo, Nombre, Precio, CategoriaId) VALUES ('P13', 'Tofu teriyaki', 450.00, 7);
+INSERT INTO Productos (Codigo, Nombre, Precio, CategoriaId) VALUES ('P14', 'Falafel con tzatziki', 400.00, 7);
+INSERT INTO Productos (Codigo, Nombre, Precio, CategoriaId) VALUES ('P15', 'Tres leches', 300.00, 8);
+INSERT INTO Productos (Codigo, Nombre, Precio, CategoriaId) VALUES ('P16', 'Flan de coco', 250.00, 8);
+INSERT INTO Productos (Codigo, Nombre, Precio, CategoriaId) VALUES ('P17', 'Cerveza Presidente', 100.00, 9);
+INSERT INTO Productos (Codigo, Nombre, Precio, CategoriaId) VALUES ('P18', 'Coca Cola', 60.00, 9);
+INSERT INTO Productos (Codigo, Nombre, Precio, CategoriaId) VALUES ('P19', 'Empanadas de pollo', 120.00, 1);
+INSERT INTO Productos (Codigo, Nombre, Precio, CategoriaId) VALUES ('P20', 'Sancocho', 500.00, 4);
+INSERT INTO Productos (Codigo, Nombre, Precio, CategoriaId) VALUES ('P21', 'Paella', 700.00, 6);
+INSERT INTO Productos (Codigo, Nombre, Precio, CategoriaId) VALUES ('P22', 'Hamburguesa de lentejas', 300.00, 7);
+INSERT INTO Productos (Codigo, Nombre, Precio, CategoriaId) VALUES ('P23', 'Brownie', 200.00, 8);
+INSERT INTO Productos (Codigo, Nombre, Precio, CategoriaId) VALUES ('P24', 'Jugo de chinola', 70.00, 9);
+INSERT INTO Productos (Codigo, Nombre, Precio, CategoriaId) VALUES ('P25', 'Asopao de pollo', 400.00, 4);
+INSERT INTO Productos (Codigo, Nombre, Precio, CategoriaId) VALUES ('P26', 'Mofongo con camarones', 600.00, 2);
+INSERT INTO Productos (Codigo, Nombre, Precio, CategoriaId) VALUES ('P27', 'Lomo de cerdo', 700.00, 5);
+INSERT INTO Productos (Codigo, Nombre, Precio, CategoriaId) VALUES ('P28', 'Pastel de chocolate', 350.00, 8);
+INSERT INTO Productos (Codigo, Nombre, Precio, CategoriaId) VALUES ('P29', 'Pastel de zanahoria', 300.00, 8);
+INSERT INTO Productos (Codigo, Nombre, Precio, CategoriaId) VALUES ('P30', 'Ron Barceló', 150.00, 9);
 
-INSERT INTO Facturas (Fecha, Total, MesaId) VALUES ('2023-07-20 12:00:00', 15.00, 1);
 
 INSERT INTO Inventarios (ProductoId, Cantidad) VALUES (1, 100);
 INSERT INTO Inventarios (ProductoId, Cantidad) VALUES (2, 50);
@@ -342,22 +359,13 @@ INSERT INTO Inventarios (ProductoId, Cantidad) VALUES (17, 70);
 INSERT INTO Inventarios (ProductoId, Cantidad) VALUES (18, 80);
 INSERT INTO Inventarios (ProductoId, Cantidad) VALUES (19, 100);
 INSERT INTO Inventarios (ProductoId, Cantidad) VALUES (20, 75);
-
-INSERT INTO Ventas (ClienteId, UsuarioId, Total, MetodoPago, Fecha, FacturaId, MesaId) VALUES (1, '5c935c89-ed4b-4688-87be-1c9d8b8f2677', 10.00, 'Efectivo', '2023-07-20 13:00:00', 1, 1);
-INSERT INTO Ventas (ClienteId, UsuarioId, Total, MetodoPago, Fecha, FacturaId, MesaId) VALUES (2, '5c935c89-ed4b-4688-87be-1c9d8b8f2677', 20.00, 'Tarjeta de Crédito', '2023-07-20 14:00:00', 1, 2);
-INSERT INTO Ventas (ClienteId, UsuarioId, Total, MetodoPago, Fecha, FacturaId, MesaId) VALUES (2, '5c935c89-ed4b-4688-87be-1c9d8b8f2677', 30.00, 'Tarjeta de Débito', '2023-07-20 15:00:00', 1, 2);
-
-INSERT INTO Pagos (VentaId, Monto, Fecha) VALUES (7, 10.00, '2023-07-20 13:00:00');
-INSERT INTO Pagos (VentaId, Monto, Fecha) VALUES (8, 20.00, '2023-07-20 14:00:00');
-INSERT INTO Pagos (VentaId, Monto, Fecha) VALUES (9, 30.00, '2023-07-20 15:00:00');
-
-INSERT INTO VentaProductos (VentaId, ProductoId, Cantidad) VALUES (7, 1, 1);
-INSERT INTO VentaProductos (VentaId, ProductoId, Cantidad) VALUES (7, 3, 1);
-INSERT INTO VentaProductos (VentaId, ProductoId, Cantidad) VALUES (8, 2, 4);
-INSERT INTO VentaProductos (VentaId, ProductoId, Cantidad) VALUES (9, 2, 2);
-INSERT INTO VentaProductos (VentaId, ProductoId, Cantidad) VALUES (9, 3, 2);
-
-
-
-
-SELECT * FROM Clientes;
+INSERT INTO Inventarios (ProductoId, Cantidad) VALUES (21, 60);
+INSERT INTO Inventarios (ProductoId, Cantidad) VALUES (22, 70);
+INSERT INTO Inventarios (ProductoId, Cantidad) VALUES (23, 80);
+INSERT INTO Inventarios (ProductoId, Cantidad) VALUES (24, 90);
+INSERT INTO Inventarios (ProductoId, Cantidad) VALUES (25, 100);
+INSERT INTO Inventarios (ProductoId, Cantidad) VALUES (26, 90);
+INSERT INTO Inventarios (ProductoId, Cantidad) VALUES (27, 80);
+INSERT INTO Inventarios (ProductoId, Cantidad) VALUES (28, 70);
+INSERT INTO Inventarios (ProductoId, Cantidad) VALUES (29, 60);
+INSERT INTO Inventarios (ProductoId, Cantidad) VALUES (30, 50);

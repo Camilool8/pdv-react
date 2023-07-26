@@ -1,5 +1,6 @@
 .product-container {
   display: flex;
+  flex-direction: row; /* Añadido para establecer la dirección de los elementos flexibles */
   justify-content: space-between;
   padding: 2rem;
   background-color: #eff7ef;
@@ -25,88 +26,108 @@
 }
 
 .product-container .product-form-container {
-  flex: 0 0 20%; /* Cambiado a 0 0 para evitar que el tamaño de este contenedor cambie */
+  flex: 0.25; /* Cambiado a auto para que el tamaño se ajuste al contenido */
+  min-width: 300px; /* Añadido para establecer un ancho mínimo para el contenedor del formulario */
   max-height: 650px;
 }
 
 .product-container .product-list-container {
-  flex: 1 1 79%;
-  overflow: hidden;
-  max-height: 650px;
+    flex:0.75; /* Cambiado a que ocupe todo el espacio disponible */
+    overflow:hidden; 
+    max-height:650px
 }
 
+.product-container .product-list-container-full {
+    flex:1; /* Cambiado a que ocupe todo el espacio disponible */
+    overflow:hidden; 
+    max-height:650px
+}
+
+
 .product-list-container .table-container {
-  max-height: 480px;
-  overflow-y: scroll;
-  border: 1px solid #8ccf9c;
-  border-radius: 4px;
-  box-shadow: 0 0.5rem 1rem rgba(140, 207, 156, 0.15);
+    max-height:480px; 
+    overflow-y:scroll; 
+    border:1px solid #8ccf9c; 
+    border-radius:4px; 
+    box-shadow:0 .5rem 1rem rgba(140,207,156,.15);
+    transition:.3s ease;
 }
 
 form .form-label {
-  display: block;
-  margin-bottom: 0.5rem;
-  font-weight: 700;
-  color: black;
+    display:block; 
+    margin-bottom:.5rem; 
+    font-weight:700
 }
 
 form input.form-input {
-  border: 1px solid #8ccf9c;
-  background-color: #ffffff;
-  transition: border-color 0.3s ease;
+    border:none; /* Eliminado el borde para que no se vea el desbordamiento */
+    background-color:#ffffff; 
+    transition:border-color .3s ease
 }
 
 form input.form-input:focus {
-  outline: none;
-  border-color: #71b885;
+    outline:none; 
+    border-color:#71b885
 }
 
 form button {
-  border: none;
-  height: 60px;
-  padding: 0.5rem 1rem;
-  border-radius: 10px;
-  transition: background-color 0.3s ease;
-  text-transform: uppercase;
+    border:none; 
+    height:60px; 
+    padding:.5rem;
+    border-radius:10px; 
+    transition:background-color .3s ease; 
+    text-transform:uppercase
+}
+
+.btn-group {
+    display:flex; 
+    justify-content:space-between;
+}
+
+.btn-group button {
+    flex:1; 
+    margin-right:.5rem;
+    width:100%;
+    border-radius:10px;
 }
 
 form button:hover {
-  background-color: #eff7ef;
+    background-color:#eff7ef
 }
 
 table th {
-  color: #8ccf9c;
+    color:black;
 }
 
 table tr {
-  transition: background-color 0.3s ease;
+    transition:background-color .3s ease
 }
 
 table tr.table-success {
-  background-color: #d6e7ce;
+    background-color:#d6e7ce
 }
 
 table tr:hover {
-  background-color: #eff7ef;
-  cursor: pointer;
+    background-color:#eff7ef; 
+    cursor:pointer
 }
 
 table td .cursor-pointer {
-  transition: color 0.3s ease;
+    transition:color .3s ease
 }
 
 table td .cursor-pointer:hover {
-  color: #71b885;
+    color:#71b885
 }
 
 table td .text-warning {
-  color: #8ccf9c;
+    color:#8ccf9c
 }
 
 table td .text-danger {
-  color: #5da071;
+    color:#5da071
 }
 
 table td .text-danger:hover {
-  color: #488056;
+    color:#488056
 }

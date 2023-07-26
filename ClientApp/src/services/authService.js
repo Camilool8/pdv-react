@@ -17,18 +17,37 @@ async function registerUser(user) {
   }
 }
 
-async function loginUser(user) {
+const loginUser = async (user) => {
   try {
-    const response = await axios.post(API_URL + "login", user);
+    const response = await axios.post(
+      "https://localhost:7100/Accounts/login",
+      user
+    );
     if (response.data) {
-      // Almacenar el token en el local storage
-      localStorage.setItem("userToken", response.data);
+      // get the token from the response data
+      const token = response.data;
+      // save the token in the local storage
+      localStorage.setItem("userToken", token);
+      // make another axios request to the validate-token route with the token
+      const response2 = await axios.get(
+        "https://localhost:7100/Accounts/validate-token",
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      if (response2.data) {
+        // get the user data from the response2 data
+        return response2.data;
+      } else {
+        throw new Error("Invalid response");
+      }
+    } else {
+      throw new Error("Invalid response");
     }
-    return response.data;
   } catch (error) {
     throw error;
   }
-}
+};
 
 function logoutUser() {
   // Eliminar el token del local storage al cerrar sesión

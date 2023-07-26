@@ -145,6 +145,18 @@ namespace PDVreact.Controllers
             return NoContent();
         }
 
+        // GET: api/Productos/ByCategoria/5
+        [HttpGet("ByCategoria/{categoriaId}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<ActionResult<IEnumerable<ProductoDTO>>> GetProductosByCategoria(int categoriaId)
+        {
+            return await _context.Productos
+                .Where(p => p.CategoriaId == categoriaId)
+                .Select(p => new ProductoDTO { Id = p.Id, Codigo = p.Codigo, Nombre = p.Nombre, Precio = p.Precio, CategoriaId = p.CategoriaId })
+                .ToListAsync();
+        }
+
+
         private bool ProductoExists(int id)
         {
             return _context.Productos.Any(e => e.Id == id);

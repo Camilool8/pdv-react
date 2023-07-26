@@ -12,10 +12,10 @@ import {
   BsArrowCounterclockwise,
 } from "react-icons/bs";
 import "bootstrap/dist/css/bootstrap.min.css";
-import "./Clientes.css";
+import "./Categorias.css";
 
-function Clientes() {
-  const [selectedClient, setSelectedClient] = useState(null);
+function Categorias() {
+  const [selectedCategory, setSelectedCategory] = useState(null);
   const { user, loading, getToken } = useContext(AuthContext);
   const [searchTerm, setSearchTerm] = useState("");
   const { register, handleSubmit, reset, setValue } = useForm();
@@ -29,19 +29,19 @@ function Clientes() {
     }
   }, [loading, user, navigate]);
 
-  const fetchClients = async () => {
+  const fetchCategories = async () => {
     const token = getToken();
-    const { data } = await axios.get("https://localhost:7100/Clientes", {
+    const { data } = await axios.get("https://localhost:7100/Categorias", {
       headers: { Authorization: `Bearer ${token}` },
     });
     return data;
   };
 
-  const createClient = async (newClient) => {
+  const createCategory = async (newCategory) => {
     const token = getToken();
     const { data } = await axios.post(
-      "https://localhost:7100/Clientes",
-      newClient,
+      "https://localhost:7100/Categorias",
+      newCategory,
       {
         headers: { Authorization: `Bearer ${token}` },
       }
@@ -49,11 +49,11 @@ function Clientes() {
     return data;
   };
 
-  const updateClient = async ({ id, ...updatedClient }) => {
+  const updateCategory = async ({ id, ...updatedCategory }) => {
     const token = getToken();
     const { data } = await axios.put(
-      `https://localhost:7100/Clientes/${id}`,
-      updatedClient,
+      `https://localhost:7100/Categorias/${id}`,
+      updatedCategory,
       {
         headers: { Authorization: `Bearer ${token}` },
       }
@@ -61,47 +61,47 @@ function Clientes() {
     return data;
   };
 
-  const deleteClient = async (id) => {
+  const deleteCategory = async (id) => {
     const token = getToken();
-    await axios.delete(`https://localhost:7100/Clientes/${id}`, {
+    await axios.delete(`https://localhost:7100/Categorias/${id}`, {
       headers: { Authorization: `Bearer ${token}` },
     });
     return id;
   };
 
-  const { data: clients, isLoading } = useQuery("clients", fetchClients);
+  const { data: categories, isLoading } = useQuery("categories", fetchCategories);
 
-  const mutationCreate = useMutation(createClient, {
+  const mutationCreate = useMutation(createCategory, {
     onSuccess: () => {
-      queryClient.invalidateQueries("clients");
+      queryClient.invalidateQueries("categories");
     },
   });
 
-  const mutationUpdate = useMutation(updateClient, {
+  const mutationUpdate = useMutation(updateCategory, {
     onSuccess: () => {
-      setSelectedClient(null);
-      queryClient.invalidateQueries("clients");
+      setSelectedCategory(null);
+      queryClient.invalidateQueries("categories");
     },
   });
 
-  const mutationDelete = useMutation(deleteClient, {
+  const mutationDelete = useMutation(deleteCategory, {
     onSuccess: (deletedId) => {
-      if (selectedClient?.id === deletedId) setSelectedClient(null);
-      queryClient.invalidateQueries("clients");
+      if (selectedCategory?.id === deletedId) setSelectedCategory(null);
+      queryClient.invalidateQueries("categories");
     },
   });
 
   const onSubmit = (data) => {
-    if (selectedClient) {
-      mutationUpdate.mutate({ ...data, id: selectedClient.id });
+    if (selectedCategory) {
+      mutationUpdate.mutate({ ...data, id: selectedCategory.id });
     } else {
       mutationCreate.mutate(data);
     }
     reset();
   };
 
-  const deselectClient = () => {
-    setSelectedClient(null);
+  const deselectCategory = () => {
+    setSelectedCategory(null);
   };
 
   const clearForm = () => {
@@ -109,30 +109,28 @@ function Clientes() {
   };
 
   useEffect(() => {
-    if (selectedClient) {
-      setValue("nombre", selectedClient.nombre);
-      setValue("direccion", selectedClient.direccion);
-      setValue("telefono", selectedClient.telefono);
+    if (selectedCategory) {
+      setValue("nombre", selectedCategory.nombre);
+      setValue("descripcion", selectedCategory.descripcion);
     } else {
       reset();
     }
-  }, [selectedClient, setValue, reset]);
+  }, [selectedCategory, setValue, reset]);
 
   const handleSearch = (event) => {
     setSearchTerm(event.target.value);
   };
 
-  const filteredClients = clients?.filter(
-    (client) =>
-      client.nombre.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      client.direccion.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredCategories = categories?.filter(
+    (category) =>
+      category.nombre.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   return (
-    <div className="client-container row g-3">
+    <div className="category-container row g-3">
       {user && user.rol === "Administrador" && (
-        <div className="client-form-container p-4 bg-light rounded-3 shadow">
-          <h2 className="mb-4">Añadir / Editar Cliente</h2>
+        <div className="category-form-container p-4 bg-light rounded-3 shadow">
+          <h2 className="mb-4">Añadir / Editar Categoría</h2>
           <form onSubmit={handleSubmit(onSubmit)}>
             <div className="mb-3">
               <label className="form-label">Nombre</label>
@@ -142,26 +140,10 @@ function Clientes() {
                 className="form-control form-input"
               />
             </div>
-            <div className="mb-3">
-              <label className="form-label">Dirección</label>
-              <input
-                {...register("direccion")}
-                placeholder="Dirección"
-                className="form-control form-input"
-              />
-            </div>
-            <div className="mb-3">
-              <label className="form-label">Teléfono</label>
-              <input
-                {...register("telefono")}
-                placeholder="Teléfono"
-                className="form-control form-input"
-              />
-            </div>
             <div className="d-flex justify-content-between">
               <div className="btn-group">
                 <button type="submit" className="btn btn-outline-primary">
-                  {selectedClient ? (
+                  {selectedCategory ? (
                     <>
                       <BsPencilSquare />
                       Editar
@@ -181,10 +163,10 @@ function Clientes() {
                   <BsArrowCounterclockwise />
                   Limpiar
                 </button>
-                {selectedClient && (
+                {selectedCategory && (
                   <button
                     type="button"
-                    onClick={deselectClient}
+                    onClick={deselectCategory}
                     className="btn btn-outline-secondary"
                   >
                     <BsX />
@@ -200,68 +182,64 @@ function Clientes() {
       <div
         className={
           user && user.rol === "Administrador"
-            ? "client-list-container p-4 bg-light rounded-3 shadow"
-            : "client-list-container-full p-4 bg-light rounded-3 shadow"
+            ? "category-list-container p-4 bg-light rounded-3 shadow"
+            : "category-list-container-full p-4 bg-light rounded-3 shadow"
         }
       >
-        <h2 className="mb-4">Lista de Clientes</h2>
+        <h2 className="mb-4">Lista de Categorías</h2>
         <input
           type="text"
           className="form-control form-input mb-4"
           placeholder="Buscar..."
-          onChange={handleSearch} // Add onChange to capture user input
+          onChange={handleSearch} 
         />
         <div className="table-container">
           <table className="table table-striped">
             <thead>
               <tr>
                 <th>Nombre</th>
-                <th>Dirección</th>
-                <th>Teléfono</th>
                 {user && user.rol === "Administrador" && <th>Acciones</th>}
               </tr>
             </thead>
             <tbody>
               {isLoading ? (
                 <tr>
-                  <td colSpan="4">Cargando clientes...</td>
+                  <td colSpan="3">Cargando categorías...</td>
                 </tr>
               ) : (
-                filteredClients.map((client) => (
+                filteredCategories.map((category) => (
                   <tr
-                    key={client.id}
+                    key={category.id}
                     className={`${
-                      selectedClient?.id === client.id ? "table-success" : ""
+                      selectedCategory?.id === category.id ? "table-success" : ""
                     }`}
-                    onClick={() => setSelectedClient(client)}
+                    onClick={() => setSelectedCategory(category)}
                   >
-                    <td>{client.nombre}</td>
-                    <td>{client.direccion}</td>
-                    <td>{client.telefono}</td>
+                    <td>{category.nombre}</td>
                     {user && user.rol === "Administrador" && (
                       <td>
                         <BsPencilSquare
-                          onClick={() => setSelectedClient(client)}
+                          onClick={() => setSelectedCategory(category)}
                           className="me-2 text-warning cursor-pointer"
                         />
                         <BsFillTrashFill
                           onClick={(e) => {
                             e.stopPropagation();
-                            mutationDelete.mutate(client.id);
-                          }}
-                          className="text-danger cursor-pointer"
-                        />
-                      </td>
-                    )}
-                  </tr>
-                ))
-              )}
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-  );
-}
+                            mutationDelete.mutate(category.id);
+                            }}
+                            className="text-danger cursor-pointer"
+                            />
+                            </td>
+                            )}
+                            </tr>
+                            ))
+                            )}
+                            </tbody>
+                            </table>
+                            </div>
+                            </div>
+                            </div>
+                            );
+                            }
 
-export default Clientes;
+export default Categorias;

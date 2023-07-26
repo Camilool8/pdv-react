@@ -21,7 +21,7 @@
 
 .login-title {
   margin-bottom: 30px;
-  color: #ffffff; /* Cambiar el color del título a blanco */
+  color: #ffffff !important;/* Cambiar el color del título a blanco */
   font-weight: bold;
   font-size: 2em;
 }
