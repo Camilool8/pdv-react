@@ -13,6 +13,7 @@ import {
 } from "react-icons/bs";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./Productos.css";
+import { BaseUrl } from "../services/apiUrl";
 
 function Productos() {
   const [selectedProduct, setSelectedProduct] = useState(null);
@@ -31,7 +32,7 @@ function Productos() {
 
   const fetchProductos = async () => {
     const token = await getToken();
-    const { data } = await axios.get("https://localhost:7100/Productos", {
+    const { data } = await axios.get(`${BaseUrl}/Productos`, {
       headers: { Authorization: `Bearer ${token}` },
     });
     return data;
@@ -39,7 +40,7 @@ function Productos() {
 
   const fetchCategorias = async () => {
     const token = await getToken();
-    const { data } = await axios.get("https://localhost:7100/Categorias", {
+    const { data } = await axios.get(`${BaseUrl}/Categorias`, {
       headers: { Authorization: `Bearer ${token}` },
     });
     return data;
@@ -47,7 +48,7 @@ function Productos() {
 
   const fetchInventario = async () => {
     const token = await getToken();
-    const { data } = await axios.get("https://localhost:7100/Inventarios", {
+    const { data } = await axios.get(`${BaseUrl}/Inventarios`, {
       headers: { Authorization: `Bearer ${token}` },
     });
     return data;
@@ -62,7 +63,7 @@ function Productos() {
 
     // Creando el producto
     const productResponse = await axios.post(
-      "https://localhost:7100/Productos",
+      `${BaseUrl}/Productos`,
       newProduct,
       {
         headers: { Authorization: `Bearer ${token}` },
@@ -79,7 +80,7 @@ function Productos() {
     };
 
     // Haciendo el POST en el inventario
-    await axios.post("https://localhost:7100/Inventarios", inventory, {
+    await axios.post(`${BaseUrl}/Inventarios`, inventory, {
       headers: { Authorization: `Bearer ${token}` },
     });
 
@@ -90,7 +91,7 @@ function Productos() {
     const token = await getToken();
     updatedProduct.Id = id; // Add the id back into updatedProduct.
     const { data } = await axios.put(
-      `https://localhost:7100/Productos/${id}`,
+      `${BaseUrl}/Productos/${id}`,
       updatedProduct,
       {
         headers: { Authorization: `Bearer ${token}` },
@@ -109,7 +110,7 @@ function Productos() {
     updatedInventory.productoId = productoId;
 
     const { data } = await axios.put(
-      `https://localhost:7100/Inventarios/${productoId}`,
+      `${BaseUrl}/Inventarios/${productoId}`,
       {
         ...updatedInventory,
       },
@@ -122,7 +123,7 @@ function Productos() {
 
   const deleteProducto = async (id) => {
     const token = await getToken();
-    await axios.delete(`https://localhost:7100/Productos/${id}`, {
+    await axios.delete(`${BaseUrl}/Productos/${id}`, {
       headers: { Authorization: `Bearer ${token}` },
     });
     return id;

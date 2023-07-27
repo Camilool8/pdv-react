@@ -116,19 +116,19 @@ using (var scope = app.Services.CreateScope())
         }
     }
 
-    // Create an admin user
+    var adminUser = builder.Configuration.GetSection("userAdm");
     var admin = new Usuario
     {
-        UserName = "Admin",
-        Email = "admin@pdv.com",
-        Nombre = "Administrador",
+        UserName = adminUser["UserName"],
+        Email = adminUser["Email"],
+        Nombre = adminUser["Nombre"],
         EmailConfirmed = true
     };
 
     // Check if the admin user exists, if not, create it
     if (await userManager.FindByNameAsync(admin.UserName) == null)
     {
-        await userManager.CreateAsync(admin, "  ");
+        await userManager.CreateAsync(admin, adminUser["Password"]);
         await userManager.AddToRoleAsync(admin, "Administrador");
     }
 }

@@ -13,6 +13,7 @@ import {
 } from "react-icons/bs";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./Categorias.css";
+import { BaseUrl } from "../services/apiUrl";
 
 function Categorias() {
   const [selectedCategory, setSelectedCategory] = useState(null);
@@ -31,7 +32,7 @@ function Categorias() {
 
   const fetchCategories = async () => {
     const token = getToken();
-    const { data } = await axios.get("https://localhost:7100/Categorias", {
+    const { data } = await axios.get(`${BaseUrl}/Categorias`, {
       headers: { Authorization: `Bearer ${token}` },
     });
     return data;
@@ -40,7 +41,7 @@ function Categorias() {
   const createCategory = async (newCategory) => {
     const token = getToken();
     const { data } = await axios.post(
-      "https://localhost:7100/Categorias",
+      `${BaseUrl}/Categorias`,
       newCategory,
       {
         headers: { Authorization: `Bearer ${token}` },
@@ -52,7 +53,7 @@ function Categorias() {
   const updateCategory = async ({ id, ...updatedCategory }) => {
     const token = getToken();
     const { data } = await axios.put(
-      `https://localhost:7100/Categorias/${id}`,
+      `${BaseUrl}/Categorias/${id}`,
       updatedCategory,
       {
         headers: { Authorization: `Bearer ${token}` },
@@ -63,7 +64,7 @@ function Categorias() {
 
   const deleteCategory = async (id) => {
     const token = getToken();
-    await axios.delete(`https://localhost:7100/Categorias/${id}`, {
+    await axios.delete(`${BaseUrl}/Categorias/${id}`, {
       headers: { Authorization: `Bearer ${token}` },
     });
     return id;

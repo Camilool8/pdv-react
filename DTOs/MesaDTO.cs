@@ -8,7 +8,6 @@ namespace PDVreact.DTOs
         public int Id { get; set; }
         public string Estado { get; set; }
         public List<VentaDTO> Ventas { get; set; }
-        public List<FacturaDTO> Facturas { get; set; }
     }
 
 }

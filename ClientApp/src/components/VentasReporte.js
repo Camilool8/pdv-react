@@ -5,6 +5,7 @@ import axios from "axios";
 import { useQuery } from "react-query";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./VentasReporte.css";
+import { BaseUrl } from "../services/apiUrl";
 
 function VentasReporte() {
   const { user, loading, getToken } = useContext(AuthContext);
@@ -19,7 +20,7 @@ function VentasReporte() {
 
   const fetchSales = async () => {
     const token = getToken();
-    const { data } = await axios.get("https://localhost:7100/api/Ventas", {
+    const { data } = await axios.get(`${BaseUrl}/api/Ventas`, {
       headers: { Authorization: `Bearer ${token}` },
     });
     return data;

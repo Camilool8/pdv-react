@@ -13,6 +13,7 @@ import {
 } from "react-icons/bs";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./Usuarios.css";
+import { BaseUrl } from "../services/apiUrl";
 
 function Usuarios() {
   const [selectedUser, setSelectedUser] = useState(null);
@@ -31,7 +32,7 @@ function Usuarios() {
 
   const fetchUsers = async () => {
     const token = getToken();
-    const { data } = await axios.get("https://localhost:7100/Usuarios", {
+    const { data } = await axios.get(`${BaseUrl}/Usuarios`, {
       headers: { Authorization: `Bearer ${token}` },
     });
     return data;
@@ -40,7 +41,7 @@ function Usuarios() {
   const createUser = async (newUser) => {
     const token = getToken();
     const { data } = await axios.post(
-      "https://localhost:7100/Usuarios",
+      `${BaseUrl}/Usuarios`,
       newUser,
       {
         headers: { Authorization: `Bearer ${token}` },
@@ -51,19 +52,15 @@ function Usuarios() {
 
   const updateUser = async ({ id, ...updatedUser }) => {
     const token = getToken();
-    const { data } = await axios.put(
-      `https://localhost:7100/Usuarios/${id}`,
-      updatedUser,
-      {
-        headers: { Authorization: `Bearer ${token}` },
-      }
-    );
+    const { data } = await axios.put(`${BaseUrl}/Usuarios/${id}`, updatedUser, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
     return data;
   };
 
   const deleteUser = async (id) => {
     const token = getToken();
-    await axios.delete(`https://localhost:7100/Usuarios/${id}`, {
+    await axios.delete(`${BaseUrl}/Usuarios/${id}`, {
       headers: { Authorization: `Bearer ${token}` },
     });
     return id;

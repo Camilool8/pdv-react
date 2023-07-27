@@ -13,6 +13,7 @@ import {
 } from "react-icons/bs";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./Clientes.css";
+import { BaseUrl } from "../services/apiUrl";
 
 function Clientes() {
   const [selectedClient, setSelectedClient] = useState(null);
@@ -31,7 +32,7 @@ function Clientes() {
 
   const fetchClients = async () => {
     const token = getToken();
-    const { data } = await axios.get("https://localhost:7100/Clientes", {
+    const { data } = await axios.get(`${BaseUrl}/Clientes`, {
       headers: { Authorization: `Bearer ${token}` },
     });
     return data;
@@ -40,7 +41,7 @@ function Clientes() {
   const createClient = async (newClient) => {
     const token = getToken();
     const { data } = await axios.post(
-      "https://localhost:7100/Clientes",
+      `${BaseUrl}/Clientes`,
       newClient,
       {
         headers: { Authorization: `Bearer ${token}` },
@@ -52,7 +53,7 @@ function Clientes() {
   const updateClient = async ({ id, ...updatedClient }) => {
     const token = getToken();
     const { data } = await axios.put(
-      `https://localhost:7100/Clientes/${id}`,
+      `${BaseUrl}/Clientes/${id}`,
       updatedClient,
       {
         headers: { Authorization: `Bearer ${token}` },
@@ -63,7 +64,7 @@ function Clientes() {
 
   const deleteClient = async (id) => {
     const token = getToken();
-    await axios.delete(`https://localhost:7100/Clientes/${id}`, {
+    await axios.delete(`${BaseUrl}/Clientes/${id}`, {
       headers: { Authorization: `Bearer ${token}` },
     });
     return id;

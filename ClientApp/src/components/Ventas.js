@@ -30,6 +30,7 @@ import _ from "lodash";
 import { useParams, useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { BaseUrl } from "../services/apiUrl";
 
 const theme = createTheme({
   palette: {
@@ -409,7 +410,7 @@ const Ventas = () => {
 
   const obtenerVentaExistente = () => {
     axios
-      .get(`https://localhost:7100/api/Ventas/mesa/${idMesa}`)
+      .get(`${BaseUrl}/api/Ventas/mesa/${idMesa}`)
       .then((res) => {
         if (res.data.length > 0) {
           // Verificamos si hay datos en la respuesta
@@ -441,7 +442,7 @@ const Ventas = () => {
 
   const obtenerVentaMesa = () => {
     axios
-      .get(`https://localhost:7100/api/Ventas/mesa/${idMesa}/venta`)
+      .get(`${BaseUrl}/api/Ventas/mesa/${idMesa}/venta`)
       .then((res) => {
         if (res.data) {
           console.log("Venta de la mesa: ", res.data);
@@ -458,12 +459,12 @@ const Ventas = () => {
 
   useEffect(() => {
     axios
-      .get("https://localhost:7100/Categorias")
+      .get(`${BaseUrl}/Categorias`)
       .then((response) => setCategorias(response.data))
       .catch((err) => console.error(err));
 
     axios
-      .get("https://localhost:7100/Clientes")
+      .get(`${BaseUrl}/Clientes`)
       .then((response) => setClientes(response.data))
       .catch((err) => console.error(err));
 
@@ -473,7 +474,7 @@ const Ventas = () => {
 
   const handleCategoryClick = (id) => {
     axios
-      .get(`https://localhost:7100/Productos/ByCategoria/${id}`)
+      .get(`${BaseUrl}/Productos/ByCategoria/${id}`)
       .then((response) => setProductos(response.data))
       .catch((err) => console.error(err));
   };
@@ -515,15 +516,12 @@ const Ventas = () => {
       console.log("Detalle de venta: ", detalleVenta);
 
       axios
-        .post(
-          `https://localhost:7100/api/Ventas/${ventaId}/productos`,
-          detalleVenta
-        )
+        .post(`${BaseUrl}/api/Ventas/${ventaId}/productos`, detalleVenta)
         .then(() => console.log("Detalle de venta añadido."))
         .catch((err) => console.error(err));
     });
 
-    axios.post("https://localhost:7100/api/Cuentas", {
+    axios.post(`${BaseUrl}/api/Cuentas`, {
       VentaId: ventaId,
       Total: _.sumBy(carrito, (item) => item.precio * item.cantidad),
     });
@@ -550,7 +548,7 @@ const Ventas = () => {
 
         axios
           .put(
-            `https://localhost:7100/api/Ventas/${venta.id}/productos/${detalle.id}`,
+            `${BaseUrl}/api/Ventas/${venta.id}/productos/${detalle.id}`,
             detalleVenta
           )
           .then(() => {
@@ -558,7 +556,7 @@ const Ventas = () => {
           })
           .catch((err) => console.error(err));
 
-          axios.put(`https://localhost:7100/api/Cuentas/${venta.cuentas[0].id}`, {
+          axios.put(`${BaseUrl}/api/Cuentas/${venta.cuentas[0].id}`, {
             Total: _.sumBy(carrito, (item) => item.precio * item.cantidad),
           });
       } else {
@@ -570,7 +568,7 @@ const Ventas = () => {
           .then(() => console.log("Detalle de venta eliminado."))
           .catch((err) => console.error(err));
 
-          axios.put(`https://localhost:7100/api/Cuentas/${venta.cuenta.id}`, {
+          axios.put(`${BaseUrl}/api/Cuentas/${venta.cuenta.id}`, {
             Total: _.sumBy(carrito, (item) => item.precio * item.cantidad),
           });
       }
@@ -593,10 +591,7 @@ const Ventas = () => {
         console.log("Detalle de venta: ", detalleVenta);
 
         axios
-          .post(
-            `https://localhost:7100/api/Ventas/${venta.id}/productos`,
-            detalleVenta
-          )
+          .post(`${BaseUrl}/api/Ventas/${venta.id}/productos`, detalleVenta)
           .then(() => console.log("Detalle de venta añadido."))
           .catch((err) => console.error(err));
       }
@@ -619,17 +614,17 @@ const Ventas = () => {
 
     if (ventaExistente) {
       axios
-        .put(`https://localhost:7100/api/Ventas/${ventaActual.id}`, venta)
+        .put(`${BaseUrl}/api/Ventas/${ventaActual.id}`, venta)
         .then(() => {
           console.log("Venta actualizada.");
-          updateDetalleVentasFromCart(ventaActual,carrito)  // Llama a addDetalleVentas con el ID de la venta actualizada
+          updateDetalleVentasFromCart(ventaActual, carrito); // Llama a addDetalleVentas con el ID de la venta actualizada
         })
         .catch((err) => console.error(err));
     } 
 
     if (!ventaExistente) {
       axios
-        .post("https://localhost:7100/api/Ventas", venta)
+        .post(`${BaseUrl}/api/Ventas`, venta)
         .then((res) => {
           console.log("Venta creada.");
           addDetalleVentas(res.data.id); // Llama a addDetalleVentas con el ID de la venta creada
@@ -643,7 +638,7 @@ const handleVentaFinalizada = async (metodoPago1) => {
   try {
     // Crear una notificación toast y esperar a que termine
     await toast.promise(
-      axios.put(`https://localhost:7100/api/Ventas/${ventaActual.id}`, {
+      axios.put(`${BaseUrl}/api/Ventas/${ventaActual.id}`, {
         ...ventaActual,
         estado: "Finalizada",
         metodoPago: metodoPago1,
@@ -657,7 +652,7 @@ const handleVentaFinalizada = async (metodoPago1) => {
     console.log("Venta finalizada.");
 
     // Cambiar el estado de la mesa a "Libre"
-    await axios.put(`https://localhost:7100/Mesas/${idMesa}`, {
+    await axios.put(`${BaseUrl}/Mesas/${idMesa}`, {
       id: idMesa,
       estado: "Libre",
       ventas: [],

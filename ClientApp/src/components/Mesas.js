@@ -8,6 +8,7 @@ import Sidebar from "react-sidebar";
 import { ToastContainer, toast } from "react-toastify";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./Mesas.css";
+import { BaseUrl } from "../services/apiUrl";
 
 const MesaCard = ({
   mesa,
@@ -19,7 +20,7 @@ const MesaCard = ({
   const handleCardClick = () => {
     const handleReservar = async () => {
       try {
-        await axios.put(`https://localhost:7100/Mesas/${mesa.id}`, {
+        await axios.put(`${BaseUrl}/Mesas/${mesa.id}`, {
           estado: "Reservada",
           id: mesa.id,
           ventas: [],
@@ -33,7 +34,7 @@ const MesaCard = ({
 
     const handleLiberar = async () => {
       try {
-        await axios.put(`https://localhost:7100/Mesas/${mesa.id}`, {
+        await axios.put(`${BaseUrl}/Mesas/${mesa.id}`, {
           estado: "Libre",
           id: mesa.id,
           ventas: [],
@@ -47,7 +48,7 @@ const MesaCard = ({
 
     const handleIniciarVenta = async () => {
       try {
-        await axios.put(`https://localhost:7100/Mesas/${mesa.id}`, {
+        await axios.put(`${BaseUrl}/Mesas/${mesa.id}`, {
           estado: "Ocupada",
           id: mesa.id,
           ventas: [],
@@ -145,7 +146,7 @@ const Mesa = () => {
 
   const fetchMesas = async () => {
     try {
-      const response = await axios.get("https://localhost:7100/Mesas");
+      const response = await axios.get(`${BaseUrl}/Mesas`);
       setMesas(response.data);
     } catch (error) {
       console.error(error);

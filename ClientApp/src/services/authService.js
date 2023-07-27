@@ -1,8 +1,9 @@
 // /src/services/authService.js
 import axios from "axios";
+import { BaseUrl } from "./apiUrl";
 
 // URL de tu API
-const API_URL = "https://localhost:7100/Accounts/";
+const API_URL =  `${BaseUrl}/Accounts/`;
 
 async function registerUser(user) {
   try {
@@ -20,7 +21,7 @@ async function registerUser(user) {
 const loginUser = async (user) => {
   try {
     const response = await axios.post(
-      "https://localhost:7100/Accounts/login",
+      `${BaseUrl}/Accounts/login`,
       user
     );
     if (response.data) {
@@ -30,7 +31,7 @@ const loginUser = async (user) => {
       localStorage.setItem("userToken", token);
       // make another axios request to the validate-token route with the token
       const response2 = await axios.get(
-        "https://localhost:7100/Accounts/validate-token",
+        `${BaseUrl}/Accounts/validate-token`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }

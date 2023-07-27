@@ -7,6 +7,7 @@ import {
   logoutUser,
   getToken,
 } from "../services/authService";
+import { BaseUrl } from "../services/apiUrl";
 
 const AuthContext = createContext();
 
@@ -36,7 +37,7 @@ function AuthProvider({ children }) {
         try {
           // Asegúrate de tener una ruta en tu backend que valide y devuelva la información del usuario en base al token
           const response = await axios.get(
-            "https://localhost:7100/Accounts/validate-token",
+            `${BaseUrl}/Accounts/validate-token`,
             {
               headers: { Authorization: `Bearer ${token}` },
             }
